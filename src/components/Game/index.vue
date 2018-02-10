@@ -81,6 +81,8 @@ export default {
                     this.startX = this.offsetLeft;//记录当前初始状态水平发生改变时的位置
                     this.startY = this.offsetTop;//offsetTop等取得的值与this.style.left获取的值区别在于前者不带px,后者带px
                     this.style.transition = 'none';
+                    this.setAttribute('origin-left', this.style.left);
+                    this.setAttribute('origin-top', this.style.top);
                 });
                 this.picEl[i].addEventListener('touchmove', function (e) {
                     newLeft = e.targetTouches[0].pageX - dx; //记录拖拽的水平状态发生改变时的位置
@@ -110,10 +112,10 @@ export default {
                         obj.style.top = this.startY + 'px';
                     } else { //否则
                         let _left = obj.style.left;
-                        obj.style.left = this.startX + 'px';
+                        obj.style.left =   this.getAttribute('origin-left');
                         this.style.left = _left;
                         let _top = obj.style.top;
-                        obj.style.top = this.startY + 'px';
+                        obj.style.top = this.getAttribute('origin-top');
                         this.style.top = _top;
                         let _index = obj.getAttribute('data-index');
                         obj.setAttribute('data-index', this.getAttribute('data-index'));
