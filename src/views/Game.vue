@@ -6,7 +6,7 @@
                 :image="image"></PuzzleGame>
         </div>
         <div class="game-result"
-            v-show="end">
+            v-show="end && isShare">
             <div class="result">
                 <p>本次用时</p>
                 <p class="time">{{time}}</p>
@@ -42,12 +42,14 @@
 <script>
 import Vue from 'vue';
 import Cookie from 'js-cookie'
-import { XButton } from 'vux';
+import { XButton, AlertPlugin } from 'vux';
 import PuzzleGame from '@/components/Game'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import AppConfig from '@/config.js'
 import { Types as T } from '@/store/index'
 import { timeLineShare, shareAppMessage } from '@/utils/wxUtils';
+
+Vue.use(AlertPlugin)
 
 export default {
     name: 'Game',
@@ -64,7 +66,8 @@ export default {
             image: null,
             end: false,
             time: '00:00:00',
-            rankingList: []
+            rankingList: [],
+            isShare: false
         }
     },
     created() {
@@ -73,6 +76,7 @@ export default {
         this.randomSetImage();
     },
     mounted() {
+        this.isShare = Cookie.get('time') ? 1 : 0
         const { title, link, imgUrl } = AppConfig.share
         const that = this
         // 分享到朋友圈
@@ -81,7 +85,9 @@ export default {
             link,
             imgUrl,
             success() {
+                that.isShare = true
                 that.shareCount()
+                that.save()
             },
             cancel() {
 
@@ -95,7 +101,9 @@ export default {
             imgUrl,
             success() {
                 console.log('success');
+                that.isShare = true
                 that.shareCount()
+                that.save()
             },
             cancel() {
                 console.log('cancel');
@@ -146,20 +154,39 @@ export default {
                 if (second.length < 2) {
                     second = 0 + second
                 }
+                if (milsecond.length < 2) {
+                    milsecond = 0 + milsecond
+                }
                 this.time = `${min}:${second}.${milsecond}`
             }
         },
         puzzleEnd(data) {
-            const that = this;
             this.format(data)
+            this.end = true
+            if (!this.isShare) {
+                this.$vux.alert.show({
+                    title: '提示',
+                    content: '分享给朋友或朋友圈后才能查看成绩哦！',
+                    onShow() {
+                        // console.log('Plugin: I\'m showing')
+                    },
+                    onHide() {
+                        // console.log('Plugin: I\'m hiding')
+                    }
+                })
+            } else {
+                this.save()
+            }
             console.log('puzzle end', data);
+        },
+        save() {
+            const that = this
             //请求 设置拼图成功 ，跳转到查看结果
-            that.saveUserScore({
+            this.saveUserScore({
                 time: that.time,
                 uid: Cookie.get('uid'),
                 type: that.image
             }).then((data) => {
-                that.end = true
                 that.rankingList = data.ranking.ranking_list
                 that.setUser({
                     time: that.time,
