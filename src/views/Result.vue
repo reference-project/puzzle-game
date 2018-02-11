@@ -3,7 +3,9 @@
         <ul class="rank-content">
             <li v-for="(item, index) in scores"
                 :key="index">
-                <span class="rank" :class="{redColor: index === 0 || index === 1 || index === 2}">{{item.ranking}}</span>
+                <span class="rank" :class="{redColor: index === 0 || index === 1 || index === 2}">
+                    {{item.ranking}}
+                </span>
                 <span class="detail">
                     <span class="avatar"><img :src="item.headimg_url"></span>
                     <span class="name">{{item.nick_name}}</span>
