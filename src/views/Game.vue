@@ -36,6 +36,8 @@
                 </span>
             </div>
         </div>
+        <div class="share-mask"
+            v-show="end && !isShare"></div>
     </div>
 </template>
 
@@ -163,18 +165,7 @@ export default {
         puzzleEnd(data) {
             this.format(data)
             this.end = true
-            if (!this.isShare) {
-                this.$vux.alert.show({
-                    title: '提示',
-                    content: '分享给朋友或朋友圈后才能查看成绩哦！',
-                    onShow() {
-                        // console.log('Plugin: I\'m showing')
-                    },
-                    onHide() {
-                        // console.log('Plugin: I\'m hiding')
-                    }
-                })
-            } else {
+            if (this.isShare) {
                 this.save()
             }
             console.log('puzzle end', data);
@@ -290,5 +281,16 @@ export default {
       width: 552px;
     }
   }
+}
+
+.share-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  background: url("../assets/images/share_mask.png") no-repeat center;
+  background-size: 100% 100%;
 }
 </style>

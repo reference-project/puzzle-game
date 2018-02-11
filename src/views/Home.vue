@@ -1,8 +1,10 @@
 <template>
     <div class="home-view">
-        <div class="start">
+        <div class="start animated"
+            :class="{shake: shake}">
             <router-link to="/game">
-                <img src="../assets/images/btn_start.png">
+                <img class="animated shake"
+                    src="../assets/images/btn_start.png">
             </router-link>
         </div>
     </div>
@@ -15,9 +17,15 @@ import { timeLineShare, shareAppMessage } from '@/utils/wxUtils';
 import { mapActions } from 'vuex'
 import { Types as T } from '@/store/index'
 import AppConfig from '@/config'
+import { setInterval } from 'timers';
 
 export default {
     name: 'Home',
+    data() {
+        return {
+            shake: true
+        }
+    },
     mounted() {
         const { title, link, imgUrl, desc } = AppConfig.share
         const that = this
@@ -55,11 +63,18 @@ export default {
         ...mapActions({
             'shareCount': T.SHARE_COUNT
         })
-    }
+    },
+    mounted() {
+        setInterval(() => {
+            this.shake = !this.shake
+        }, 2000);
+    },
 }
 </script>
 
 <style lang="scss" scoped>
+@import "../assets/animate.min.css";
+
 .home-view {
   width: 100%;
   height: 100%;
@@ -68,7 +83,7 @@ export default {
   .start {
     position: absolute;
     width: 100%;
-    bottom: 75px;
+    bottom: 110px;
     text-align: center;
     img {
       width: 552px;

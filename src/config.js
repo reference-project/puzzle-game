@@ -20,7 +20,7 @@ export default {
     share: {
         title: '狗年大吉！明源云空间给您拜年啦！',
         link: 'https://active.myfuwu.com.cn/static/index',
-        imgUrl: 'http://rental.myfuwu.com.cn/static/assets/images/logo.png',
+        imgUrl: 'http://zuoh.oss-cn-hongkong.aliyuncs.com/active/logo.png',
         desc: '明源云空间给您拜年了！恭喜发财！拼图拜年，赢大奖！快来玩吧！'
     }
 }
