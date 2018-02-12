@@ -29,6 +29,11 @@
                 <p class="see-all"
                     @click="toScore">查看全部排行</p>
             </div>
+            <div class="qrcode">
+                <img src="../assets/images/img_qrcode-yunkongjian.jpeg"
+                    alt="">
+            </div>
+            <p>长按关注公众号才能领奖哦~</p>
             <div class="restart">
                 <!-- <span @click="randomSetImage">重新设置图片开始</span> -->
                 <span @click="randomSetImage">
@@ -50,9 +55,7 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 import AppConfig from '@/config.js'
 import { Types as T } from '@/store/index'
 import { timeLineShare, shareAppMessage } from '@/utils/wxUtils';
-
 Vue.use(AlertPlugin)
-
 export default {
     name: 'Game',
     components: {
@@ -79,7 +82,7 @@ export default {
     },
     mounted() {
         this.isShare = Cookie.get('time') ? 1 : 0
-        const { title, link, imgUrl } = AppConfig.share
+        const { title, link, imgUrl, desc } = AppConfig.share
         const that = this
         // 分享到朋友圈
         timeLineShare({
@@ -92,25 +95,26 @@ export default {
                 that.save()
             },
             cancel() {
-
             }
         });
         // 分享给朋友
         shareAppMessage({
             title,
-            desc: `哈哈哈...我太棒了！拼图拜年我只用了${that.user.time}！你要不要也来玩一下！有大奖哦！`,
+            desc,
             link,
             imgUrl,
             success() {
                 console.log('success');
                 that.isShare = true
                 that.shareCount()
-                that.save()
             },
             cancel() {
                 console.log('cancel');
             }
         })
+        if (this.isShare) {
+            this.save()
+        }
     },
     methods: {
         ...mapMutations({
@@ -122,7 +126,6 @@ export default {
         }),
         randomSetImage() {
             this.end = false
-
             if (this.imageIndex >= AppConfig.images.length - 1) {
                 this.imageIndex = 0;
             } else {
@@ -164,11 +167,32 @@ export default {
         },
         puzzleEnd(data) {
             this.format(data)
+            const { title, link, imgUrl } = AppConfig.share
+            const that = this
             this.end = true
+            console.log('puzzle end', data);
+            this.setUser({
+                time: this.time
+            });
+            // 分享给朋友
+            shareAppMessage({
+                title,
+                desc: `哈哈哈...我太棒了！拼图拜年我只用了${that.user.time}！你要不要也来玩一下！有大奖哦！`,
+                link,
+                imgUrl,
+                success() {
+                    console.log('success');
+                    that.isShare = true
+                    that.shareCount()
+                    that.save()
+                },
+                cancel() {
+                    console.log('cancel');
+                }
+            })
             if (this.isShare) {
                 this.save()
             }
-            console.log('puzzle end', data);
         },
         save() {
             const that = this
@@ -180,7 +204,7 @@ export default {
             }).then((data) => {
                 that.rankingList = data.ranking.ranking_list
                 that.setUser({
-                    time: that.time,
+                    // time: that.time,
                     rankingList: that.rankingList
                 });
             })
@@ -217,7 +241,7 @@ export default {
     font-weight: 100;
     .time {
       margin-top: 34px;
-      margin-bottom: 157px;
+      margin-bottom: 100px;
       font-size: 64px;
       font-weight: 400;
     }
@@ -269,6 +293,18 @@ export default {
       font-size: 28px;
       color: rgb(222, 199, 150);
       border-top: 2px solid rgb(222, 199, 150);
+    }
+  }
+  .qrcode {
+    width: 116px;
+    height: 116px;
+    margin: 70px auto 20px;
+    img {
+      width: 100%;
+    }
+    p {
+      color: #fff;
+      font-size: 24px;
     }
   }
   .restart {
