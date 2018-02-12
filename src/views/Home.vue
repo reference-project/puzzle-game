@@ -16,7 +16,7 @@ import { XButton } from 'vux';
 import { timeLineShare, shareAppMessage } from '@/utils/wxUtils';
 import { mapActions } from 'vuex'
 import { Types as T } from '@/store/index'
-import AppConfig from '@/config'
+import AppConfig from '@/config.js'
 import { setInterval } from 'timers';
 
 export default {
@@ -27,6 +27,9 @@ export default {
         }
     },
     mounted() {
+        setInterval(() => {
+            this.shake = !this.shake
+        }, 2000);
         const { title, link, imgUrl, desc } = AppConfig.share
         const that = this
         // 分享到朋友圈
@@ -63,12 +66,7 @@ export default {
         ...mapActions({
             'shareCount': T.SHARE_COUNT
         })
-    },
-    mounted() {
-        setInterval(() => {
-            this.shake = !this.shake
-        }, 2000);
-    },
+    }
 }
 </script>
 
