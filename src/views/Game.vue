@@ -92,7 +92,6 @@ export default {
             success() {
                 that.isShare = true
                 that.shareCount()
-                that.save()
             },
             cancel() {
             }
@@ -112,9 +111,6 @@ export default {
                 console.log('cancel');
             }
         })
-        if (this.isShare) {
-            this.save()
-        }
     },
     methods: {
         ...mapMutations({
@@ -173,6 +169,19 @@ export default {
             console.log('puzzle end', data);
             this.setUser({
                 time: this.time
+            });
+            // 分享到朋友圈
+            timeLineShare({
+                title,
+                link,
+                imgUrl,
+                success() {
+                    that.isShare = true
+                    that.shareCount()
+                    that.save()
+                },
+                cancel() {
+                }
             });
             // 分享给朋友
             shareAppMessage({
